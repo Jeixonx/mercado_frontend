@@ -207,7 +207,7 @@
                         <div class="grid grid-cols-3 gap-4 text-center">
                             <div>
                                 <p class="font-semibold text-gray-800 text-lg" id="seller-details-sales-count-bottom"></p>
-                                <p class="text-sm text-gray-500">Ventas concretadas</p>
+                                <p class="text-sm text-gray-500" id="seller-sales-text"></p>
                             </div>
                             <div>
                                 <i id="attention-icon" class="fas text-xl mb-1"></i>
@@ -225,7 +225,8 @@
                     <!-- Nuevo: Otras opciones de compra -->
                     <div class="mt-6 border border-gray-200 rounded-lg p-4">
                         <h3 class="text-lg font-semibold text-gray-800 mb-2">Otras opciones de compra</h3>
-                        <a href="#" class="text-blue-500 hover:text-blue-700 text-sm">Ver 3 opciones desde U$S 439</a>
+                        <!-- Added id="other-options-link" to this anchor tag -->
+                        <a href="#" id="other-options-link" class="text-blue-500 hover:text-blue-700 text-sm">Ver 3 opciones desde U$S 439</a>
                     </div>
 
                     <!-- Nuevo: Métodos de pago -->
@@ -235,29 +236,8 @@
                             <i class="fas fa-credit-card text-xl"></i>
                             <span>¡Paga en hasta 12 cuotas sin interés!</span>
                         </div>
-                        <div class="mb-4">
-                            <p class="font-semibold text-gray-800 mb-2">Tarjetas de crédito</p>
-                            <p class="text-sm text-gray-600 mb-2">¡Cuotas sin interés con bancos seleccionados!</p>
-                            <div class="flex gap-3 items-center">
-                                <img src="https://http2.mlstatic.com/secure/payment-logos/v1/visa.svg" alt="Visa" class="h-6">
-                                <img src="https://http2.mlstatic.com/secure/payment-logos/v1/mastercard.svg" alt="Mastercard" class="h-6">
-                                <img src="https://http2.mlstatic.com/secure/payment-logos/v1/amex.svg" alt="American Express" class="h-6">
-                                <img src="https://http2.mlstatic.com/secure/payment-logos/v1/oca.svg" alt="Oca" class="h-6">
-                            </div>
-                        </div>
-                        <div class="mb-4">
-                            <p class="font-semibold text-gray-800 mb-2">Tarjetas de débito</p>
-                            <div class="flex gap-3 items-center">
-                                <img src="https://http2.mlstatic.com/secure/payment-logos/v1/visa-debit.svg" alt="Visa Débito" class="h-6">
-                                <img src="https://http2.mlstatic.com/secure/payment-logos/v1/mastercard-debit.svg" alt="Mastercard Débito" class="h-6">
-                            </div>
-                        </div>
-                        <div>
-                            <p class="font-semibold text-gray-800 mb-2">Efectivo</p>
-                            <div class="flex gap-3 items-center">
-                                <img src="https://http2.mlstatic.com/secure/payment-logos/v1/abitab.svg" alt="Abitab" class="h-6">
-                                <img src="https://http2.mlstatic.com/secure/payment-logos/v1/redpagos.svg" alt="RedPagos" class="h-6">
-                            </div>
+                        <div id="payment-methods-content">
+                            <!-- Payment methods will be dynamically loaded here -->
                         </div>
                         <a href="#" class="text-blue-500 hover:text-blue-700 text-sm font-semibold mt-4 block">Conoce otros medios de pago</a>
                     </div>
@@ -274,71 +254,6 @@
     </div>
 
     <script>
-        // --- SIMULACIÓN DE API / BASE DE DATOS (para desarrollo local si el backend no está corriendo) ---
-        const productDatabase = {
-          "a55-5g-256gb-azul": { "id": "a55-5g-256gb-azul", "titulo": "Samsung Galaxy A55 5G Dual SIM 256 GB azul oscuro 8 GB RAM", "descripcion": "Con su potente procesador y 8 GB de RAM, este smartphone ofrece un alto rendimiento con una gran velocidad de transmisión de contenido. Con 256 GB de almacenamiento interno, puedes descargar todas tus apps, guardar fotos, videos y series favoritas.", "precio": 439, "precio_anterior": 499, "moneda": "U$S", "imagenes": ["https://http2.mlstatic.com/D_NQ_NP_2X_900893-MCO75048644633_032024-F.webp", "https://http2.mlstatic.com/D_NQ_NP_2X_741969-MCO75048644631_032024-F.webp", "https://http2.mlstatic.com/D_NQ_NP_2X_833228-MCO75048644632_032024-F.webp"], "vendedor_id": "samsung_oficial", "stock": 50, "caracteristicas": { "pantalla": "6.6 pulgadas", "memoria_ram": "8 GB", "almacenamiento": "256 GB", "camara_frontal": "32 MP", "camara_trasera": "50 MP", "nfc": true, "lector_huellas": true }, "envio_gratis": true, "valoracion": 4.6, "total_reviews": 795 },
-          "samsung-galaxy-a34-5g": { "id": "samsung-galaxy-a34-5g", "titulo": "Samsung Galaxy A34 5G 256GB Awesome Violet 8GB RAM", "descripcion": "La pantalla Super AMOLED de 1000 nits del Galaxy A34 5G garantiza una visualización nítida, incluso en exteriores. Para una visualización suave y sedosa en la increíble pantalla de 6,6 pulgadas, las frecuencias de actualización de hasta 120 Hz le dan vida a tu contenido.", "precio": 421, "moneda": "U$S", "imagenes": ["https://http2.mlstatic.com/D_NQ_NP_2X_866755-MLU75051216817_032024-F.webp", "https://http2.mlstatic.com/D_NQ_NP_2X_982279-MLU75051216818_032024-F.webp"], "vendedor_id": "samsung_oficial", "stock": 30, "caracteristicas": { "pantalla": "6.6 pulgadas", "memoria_ram": "8 GB", "almacenamiento": "256 GB", "camara_frontal": "13 MP", "camara_trasera": "48 MP", "nfc": true, "lector_huellas": true }, "envio_gratis": true, "valoracion": 4.7, "total_reviews": 512 },
-          "motorola-edge-30-fusion": { "id": "motorola-edge-30-fusion", "titulo": "Motorola Edge 30 Fusion 256GB Gris 12GB RAM", "descripcion": "Diseño increíblemente delgado y liviano que se adapta a tu mano. Disfruta de la pantalla pOLED de 6.55” y 144 Hz que te brinda una experiencia visual cinematográfica. Además, obtén un desempeño ultrapotente gracias al procesador Snapdragon® 888+ 5G.", "precio": 419, "moneda": "U$S", "imagenes": ["https://http2.mlstatic.com/D_NQ_NP_2X_798928-MLU72637029517_112023-F.webp", "https://http2.mlstatic.com/D_NQ_NP_2X_989233-MLU72637029515_112023-F.webp"], "vendedor_id": "motorola_oficial", "stock": 15, "caracteristicas": { "pantalla": "6.55 pulgadas", "memoria_ram": "12 GB", "almacenamiento": "256 GB", "camara_frontal": "32 MP", "camara_trasera": "50 MP", "nfc": true, "lector_huellas": true }, "envio_gratis": true, "valoracion": 4.9, "total_reviews": 320 },
-          "xiaomi-redmi-note-12-pro": { "id": "xiaomi-redmi-note-12-pro", "titulo": "Xiaomi Redmi Note 12 Pro 256GB Negro 8GB RAM", "descripcion": "El sistema de cámara más potente de Redmi Note cuenta con un sensor de imagen de gran tamaño y resolución ultraalta de 200 MP con OIS y lente de 7P. Si a esto le sumamos algoritmos de última generación y mucho más, esta cámara te ofrece el máximo poder para crear.", "precio": 326, "moneda": "U$S", "imagenes": ["https://http2.mlstatic.com/D_NQ_NP_2X_969842-MLU72937963993_112023-F.webp", "https://http2.mlstatic.com/D_NQ_NP_2X_911290-MLU72937963992_112023-F.webp"], "vendedor_id": "xiaomi_oficial", "stock": 80, "caracteristicas": { "pantalla": "6.67 pulgadas", "memoria_ram": "8 GB", "camara_frontal": "16 MP", "camara_trasera": "50 MP", "nfc": true, "lector_huellas": true }, "envio_gratis": true, "valoracion": 4.5, "total_reviews": 1250 },
-          "iphone-se-2020": { "id": "iphone-se-2020", "titulo": "Apple iPhone SE (2nd Gen) 64GB Negro", "descripcion": "El iPhone SE es un teléfono inteligente de gama media-alta diseñado y comercializado por Apple Inc. Es parte de la 13ª generación del iPhone. Fue anunciado el 15 de abril de 2020.", "precio": 299, "moneda": "U$S", "imagenes": ["https://http2.mlstatic.com/D_NQ_NP_2X_706095-MLA45758231845_042021-F.webp", "https://http2.mlstatic.com/D_NQ_NP_2X_706095-MLA45758231845_042021-F.webp"], "vendedor_id": "apple_store", "stock": 20, "caracteristicas": { "pantalla": "4.7 pulgadas", "memoria_ram": "3 GB", "almacenamiento": "64 GB", "camara_frontal": "7 MP", "camara_trasera": "12 MP", "nfc": true, "lector_huellas": true }, "envio_gratis": true, "valoracion": 4.3, "total_reviews": 980 },
-          "samsung-galaxy-s22-ultra": { "id": "samsung-galaxy-s22-ultra", "titulo": "Samsung Galaxy S22 Ultra 5G 256GB Phantom Black", "descripcion": "El Galaxy S22 Ultra combina la potencia de la serie Note y la cámara de la serie S en un solo dispositivo. Con un S Pen integrado, Nightography, y una batería que dura más de un día, este teléfono es un verdadero buque insignia.", "precio": 899, "precio_anterior": 1199, "moneda": "U$S", "imagenes": ["https://http2.mlstatic.com/D_NQ_NP_2X_913809-MLA49721666453_042022-F.webp", "https://http2.mlstatic.com/D_NQ_NP_2X_913809-MLA49721666453_042022-F.webp"], "vendedor_id": "samsung_oficial", "stock": 10, "caracteristicas": { "pantalla": "6.8 pulgadas", "memoria_ram": "12 GB", "almacenamiento": "256 GB", "camara_frontal": "40 MP", "camara_trasera": "108 MP", "nfc": true, "lector_huellas": true }, "envio_gratis": true, "valoracion": 4.9, "total_reviews": 2500 },
-          "xiaomi-mi-max-3": { "id": "xiaomi-mi-max-3", "titulo": "Xiaomi Mi Max 3 128GB Negro 4GB RAM", "descripcion": "El Xiaomi Mi Max 3 es un smartphone con una pantalla enorme de 6.9 pulgadas, ideal para consumir contenido multimedia. Cuenta con una batería de larga duración y un buen rendimiento para el uso diario.", "precio": 250, "moneda": "U$S", "imagenes": ["https://http2.mlstatic.com/D_NQ_NP_2X_616886-MLA31008064295_062019-F.webp", "https://http2.mlstatic.com/D_NQ_NP_2X_616886-MLA31008064295_062019-F.webp"], "vendedor_id": "xiaomi_oficial", "stock": 5, "caracteristicas": { "pantalla": "6.9 pulgadas", "memoria_ram": "4 GB", "almacenamiento": "128 GB", "camara_frontal": "8 MP", "camara_trasera": "12 MP", "nfc": false, "lector_huellas": true }, "envio_gratis": false, "valoracion": 4.2, "total_reviews": 150 }
-        };
-
-        const sellerDatabase = {
-          "samsung_oficial": {
-            "id": "samsung_oficial",
-            "nombre": "Samsung",
-            "imagen_perfil": "https://http2.mlstatic.com/D_NQ_NP_626832-MLA48490956557_122021-O.webp",
-            "imagen_portada": "https://http2.mlstatic.com/storage/official-stores-images/samsung/background_home_1807.jpg",
-            "tienda_oficial": true,
-            "ventas_concretadas": 12540,
-            "cantidad_productos": 57,
-            "reputacion": {
-              "nivel": 5,
-              "entrega_a_tiempo": true
-            }
-          },
-          "motorola_oficial": {
-            "id": "motorola_oficial",
-            "nombre": "Motorola",
-            "imagen_perfil": "https://http2.mlstatic.com/D_NQ_NP_977864-MLA48490956568_122021-O.webp",
-            "imagen_portada": "https://http2.mlstatic.com/storage/official-stores-images/motorola/background_home_0308.jpg",
-            "tienda_oficial": true,
-            "ventas_concretadas": 8750,
-            "cantidad_productos": 34,
-            "reputacion": {
-              "nivel": 3,
-              "entrega_a_tiempo": true
-            }
-          },
-          "xiaomi_oficial": {
-            "id": "xiaomi_oficial",
-            "nombre": "Xiaomi",
-            "imagen_perfil": "https://http2.mlstatic.com/D_NQ_NP_801925-MLA48490956570_122021-O.webp",
-            "imagen_portada": "https://http2.mlstatic.com/storage/official-stores-images/xiaomi/background_home_2507.jpg",
-            "tienda_oficial": true,
-            "ventas_concretadas": 21300,
-            "cantidad_productos": 101,
-            "reputacion": {
-              "nivel": 4,
-              "entrega_a_tiempo": false
-            }
-          },
-          "apple_store": {
-            "id": "apple_store",
-            "nombre": "Apple",
-            "imagen_perfil": "https://http2.mlstatic.com/D_NQ_NP_2X_706095-MLA45758231845_042021-F.webp",
-            "imagen_portada": "https://http2.mlstatic.com/storage/official-stores-images/apple/background_home_0101.jpg",
-            "tienda_oficial": true,
-            "ventas_concretadas": 50000,
-            "cantidad_productos": 15,
-            "reputacion": {
-              "nivel": 5,
-              "entrega_a_tiempo": true
-            }
-          }
-        };
 
         // Function to simulate the `GET /producto/{id}` API call
         function fetchProductById(productId) {
@@ -388,15 +303,30 @@
                     fetchAllSellers()
                 ]);
 
+                // Convert allProducts and allSellers from arrays (if API returns them as such) to objects for easier lookup
+                const productsById = {};
+                if (Array.isArray(allProducts)) {
+                    allProducts.forEach(p => productsById[p.id] = p);
+                } else {
+                    Object.assign(productsById, allProducts); // If it's already an object
+                }
+
+                const sellersById = {};
+                if (Array.isArray(allSellers)) {
+                    allSellers.forEach(s => sellersById[s.id] = s);
+                } else {
+                    Object.assign(sellersById, allSellers); // If it's already an object
+                }
+
                 if (!product) {
                     throw new Error(`Producto no encontrado para ID: ${productId}`);
                 }
 
-                const seller = allSellers[product.vendedor_id];
+                const seller = sellersById[product.vendedor_id];
 
                 renderProduct(product, seller);
-                renderRelatedProducts(allProducts, productId);
-                renderSellerProducts(allProducts, productId, product.vendedor_id, seller ? seller.nombre : 'Vendedor');
+                renderRelatedProducts(productsById, productId); // Pass the object
+                renderSellerProducts(productsById, productId, product.vendedor_id, seller ? seller.nombre : 'Vendedor'); // Pass the object
 
                 loadingState.classList.add('hidden');
                 productCard.classList.remove('hidden');
@@ -528,6 +458,7 @@
                     sellerDetailsImage.classList.add('hidden');
                 }
                 sellerDetailsName.textContent = seller.nombre;
+                document.getElementById('seller-sales-text').textContent = `${seller.ventas_concretadas} ventas concretadas`;
                 sellerDetailsProductsCount.textContent = `+${seller.cantidad_productos} Productos`;
                 sellerDetailsSalesCountBottom.textContent = `+${seller.ventas_concretadas}`;
 
@@ -721,6 +652,57 @@
                 event.preventDefault();
                 document.getElementById('product-features-full').scrollIntoView({ behavior: 'smooth' });
             });
+
+            // Update "Otras opciones de compra" link with dynamic price
+            const otherOptionsLink = document.getElementById('other-options-link');
+            if (otherOptionsLink) {
+                otherOptionsLink.textContent = `Ver 3 opciones desde ${product.moneda} ${price}`;
+            }
+
+            // Render payment methods
+            const paymentMethodsContent = document.getElementById('payment-methods-content');
+            paymentMethodsContent.innerHTML = '';
+
+            const paymentCategories = {
+                "Tarjetas de crédito": ["Visa", "Mastercard", "American Express", "OCA Blue"],
+                "Tarjetas de débito": ["Visa Débito", "Mastercard Débito"],
+                "Efectivo": ["Abitab", "RedPagos"]
+            };
+
+            const paymentLogos = {
+                "Visa": "https://http2.mlstatic.com/secure/payment-logos/v1/visa.svg",
+                "Mastercard": "https://http2.mlstatic.com/secure/payment-logos/v1/mastercard.svg",
+                "American Express": "https://http2.mlstatic.com/secure/payment-logos/v1/amex.svg",
+                "OCA Blue": "https://http2.mlstatic.com/secure/payment-logos/v1/oca.svg",
+                "Visa Débito": "https://http2.mlstatic.com/secure/payment-logos/v1/visa-debit.svg",
+                "Mastercard Débito": "https://http2.mlstatic.com/secure/payment-logos/v1/mastercard-debit.svg",
+                "Abitab": "https://http2.mlstatic.com/secure/payment-logos/v1/abitab.svg",
+                "RedPagos": "https://http2.mlstatic.com/secure/payment-logos/v1/redpagos.svg"
+            };
+
+            for (const category in paymentCategories) {
+                const availableMethods = paymentCategories[category].filter(method => product.metodos_pago.includes(method));
+                
+                if (availableMethods.length > 0) {
+                    let categoryHtml = `
+                        <div class="mb-4">
+                            <p class="font-semibold text-gray-800 mb-2">${category}</p>
+                    `;
+                    if (category === "Tarjetas de crédito") {
+                        categoryHtml += `<p class="text-sm text-gray-600 mb-2">¡Cuotas sin interés con bancos seleccionados!</p>`;
+                    }
+                    categoryHtml += `<div class="flex gap-3 items-center">`;
+                    
+                    availableMethods.forEach(method => {
+                        const logoSrc = paymentLogos[method];
+                        if (logoSrc) {
+                            categoryHtml += `<img src="${logoSrc}" alt="${method}" class="h-6">`;
+                        }
+                    });
+                    categoryHtml += `</div></div>`;
+                    paymentMethodsContent.innerHTML += categoryHtml;
+                }
+            }
         }
 
         function renderRelatedProducts(allProducts, currentProductId) {
