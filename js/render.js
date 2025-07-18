@@ -1,124 +1,18 @@
-// Function to simulate the `GET /producto/{id}` API call
-function fetchProductById(productId) {
-  // Uncomment the line below and comment the Promise.resolve line to use a backend server
-  return fetch(`http://localhost:8080/producto/${productId}`).then((res) =>
-    res.json()
-  );
-  // return Promise.resolve(productDatabase[productId]); // For local development
-}
-
-// Function to simulate the `GET /producto/listAll` API call
-function fetchAllProducts() {
-  // Uncomment the line below and comment the Promise.resolve line to use a backend server
-  return fetch("http://localhost:8080/producto/listAll").then((res) =>
-    res.json()
-  );
-  // return Promise.resolve(productDatabase); // For local development
-}
-
-// Function to simulate the `GET /vendedor/{id}` API call
-function fetchSellerById(sellerId) {
-  // Uncomment the line below and comment the Promise.resolve line to use a backend server
-  return fetch(`http://localhost:8080/vendedor/${sellerId}`).then((res) =>
-    res.json()
-  );
-  // return Promise.resolve(sellerDatabase[sellerId]); // For local development
-}
-
-// Function to simulate the `GET /vendedor/listAll` API call
-function fetchAllSellers() {
-  // Uncomment the line below and comment the Promise.resolve line to use a backend server
-  return fetch("http://localhost:8080/vendedor/listAll").then((res) =>
-    res.json()
-  );
-  // return Promise.resolve(sellerDatabase); // For local development
-}
-
-// Function to load product data based on URL parameter
-async function loadProductData() {
-  const urlParams = new URLSearchParams(window.location.search);
-  const productId = urlParams.get("id") || "a55-5g-256gb-azul"; // Default product ID
-
-  const productCard = document.getElementById("product-card");
-  const loadingState = document.getElementById("loading-state");
-  const errorState = document.getElementById("error-state");
-
-  loadingState.classList.remove("hidden"); // Show loading state
-  productCard.classList.add("hidden"); // Hide product card
-  errorState.classList.add("hidden"); // Hide error state
-
-  try {
-    const [product, allProducts, allSellers] = await Promise.all([
-      fetchProductById(productId),
-      fetchAllProducts(),
-      fetchAllSellers(),
-    ]);
-
-    // Convert allProducts and allSellers from arrays (if API returns them as such) to objects for easier lookup
-    const productsById = {};
-    if (Array.isArray(allProducts)) {
-      allProducts.forEach((p) => (productsById[p.id] = p));
-    } else {
-      Object.assign(productsById, allProducts); // If it's already an object
-    }
-
-    const sellersById = {};
-    if (Array.isArray(allSellers)) {
-      allSellers.forEach((s) => (sellersById[s.id] = s));
-    } else {
-      Object.assign(sellersById, allSellers); // If it's already an object
-    }
-
-    if (!product) {
-      throw new Error(`Producto no encontrado para ID: ${productId}`);
-    }
-
-    const seller = sellersById[product.vendedor_id];
-
-    renderProduct(product, seller);
-    renderRelatedProducts(productsById, productId); // Pass the object
-    renderSellerProducts(
-      productsById,
-      productId,
-      product.vendedor_id,
-      seller ? seller.nombre : "Vendedor"
-    ); // Pass the object
-
-    loadingState.classList.add("hidden");
-    productCard.classList.remove("hidden");
-  } catch (error) {
-    console.error("Error al cargar los datos:", error);
-    loadingState.classList.add("hidden");
-    errorState.classList.remove("hidden");
-  }
-}
-
-document.addEventListener("DOMContentLoaded", loadProductData);
-// Listen for popstate event to handle browser back/forward buttons
-window.addEventListener("popstate", loadProductData);
-
 function renderProduct(product, seller) {
-  // --- Fill product data ---
+
   document.title = product.titulo;
   document.getElementById("product-title").textContent = product.titulo;
   document.getElementById("product-description").textContent =
-    product.descripcion;
+  product.descripcion;
 
-  // Sales and seller information (top section)
-  if (seller && seller.ventas_concretadas) {
-    document.getElementById(
-      "sales-info"
-    ).textContent = `${seller.ventas_concretadas} vendidos`;
-  } else {
-    document.getElementById("sales-info").textContent = ""; // Clear if no sales info
-  }
+document.getElementById("sales-info").textContent =
+  seller?.ventas_concretadas ? `${seller.ventas_concretadas} vendidos` : "";
 
   document.getElementById("product-rating").textContent = product.valoracion;
   document.getElementById(
     "product-reviews"
   ).textContent = `(${product.total_reviews} opiniones)`;
 
-  // Render stars based on rating
   const ratingStarsContainer = document.getElementById("rating-stars");
   ratingStarsContainer.innerHTML = "";
   const fullStars = Math.floor(product.valoracion);
@@ -134,14 +28,13 @@ function renderProduct(product, seller) {
     halfStar.className = "fas fa-star-half-alt";
     ratingStarsContainer.appendChild(halfStar);
   }
-  // Fill remaining stars with empty stars up to 5
+
   for (let i = ratingStarsContainer.children.length; i < 5; i++) {
     const emptyStar = document.createElement("i");
-    emptyStar.className = "far fa-star"; // far for empty star
+    emptyStar.className = "far fa-star"; 
     ratingStarsContainer.appendChild(emptyStar);
   }
 
-  // Price and discount
   const price = new Intl.NumberFormat("es-UY").format(product.precio);
   document.getElementById(
     "product-price"
@@ -169,30 +62,20 @@ function renderProduct(product, seller) {
     "installments"
   ).textContent = `${installmentPrice.replace("USD", "U$S")} sin interés`;
 
-  // Shipping and stock info
   document.getElementById("shipping-info").textContent = product.envio_gratis
     ? "Envío gratis"
     : "Calcular costo";
   document.getElementById("stock-available").textContent = product.stock;
 
-  // Seller information (top section) - This section is no longer needed in the buy box
-  // Official store information is moved next to the product title.
-  // Small seller image and sales counter are removed from here.
   const officialStoreEl = document.getElementById("official-store");
-  if (seller && seller.tienda_oficial) {
-    officialStoreEl.classList.remove("hidden");
-    officialStoreEl.classList.add("flex");
-    document.getElementById(
-      "store-name"
-    ).textContent = `Tienda oficial de ${seller.nombre}`;
-  } else {
-    officialStoreEl.classList.add("hidden");
-    officialStoreEl.classList.remove("flex");
-  }
-  // Remove logic for sellerImageEl, sellerNameDisplayEl, and sellerSalesCountEl from this section
-  // as they are now managed in sellerDetailsBox or have been moved.
+const isOfficialStore = seller?.tienda_oficial;
 
-  // Detailed seller information (new box)
+officialStoreEl.classList.toggle("hidden", !isOfficialStore);
+officialStoreEl.classList.toggle("flex", isOfficialStore);
+
+document.getElementById("store-name").textContent = 
+  isOfficialStore ? `Tienda oficial de ${seller.nombre}` : "";
+
   const sellerDetailsBox = document.getElementById("seller-details-box");
   const sellerCoverImageContainer = document.getElementById(
     "seller-cover-image-container"
@@ -218,7 +101,6 @@ function renderProduct(product, seller) {
   if (seller) {
     sellerDetailsBox.classList.remove("hidden");
 
-    // Cover image
     if (seller.imagen_portada) {
       sellerCoverImage.src = seller.imagen_portada;
       sellerCoverImageContainer.classList.remove("hidden");
@@ -226,7 +108,6 @@ function renderProduct(product, seller) {
       sellerCoverImageContainer.classList.add("hidden");
     }
 
-    // Profile image (square) and its text below
     const sellerProfileAndTextContainer = sellerDetailsImage.parentElement;
     sellerProfileAndTextContainer.classList.remove(
       "flex",
@@ -237,11 +118,10 @@ function renderProduct(product, seller) {
       "flex",
       "flex-col",
       "items-start"
-    ); // Align content to the left
+    ); 
 
     if (seller.imagen_perfil) {
       sellerDetailsImage.src = seller.imagen_perfil;
-      // Changed object-cover to object-contain
       sellerDetailsImage.classList.remove("hidden", "object-cover");
       sellerDetailsImage.classList.add("object-contain");
     } else {
@@ -254,7 +134,7 @@ function renderProduct(product, seller) {
     sellerDetailsProductsCount.textContent = `+${seller.cantidad_productos} Productos`;
     sellerDetailsSalesCountBottom.textContent = `+${seller.ventas_concretadas}`;
 
-    reputationBar.innerHTML = ""; // Clear the bar before rendering
+    reputationBar.innerHTML = ""; 
     const reputationLevels = [
       {
         level: 1,
@@ -286,32 +166,24 @@ function renderProduct(product, seller) {
     for (let i = 0; i < 5; i++) {
       const segment = document.createElement("div");
       segment.classList.add("reputation-bar-segment");
-      const levelData = reputationLevels[i];
-
-      // Apply very faint base color to all segments
       segment.classList.add(`reputation-level-${i + 1}`);
-
-      // Highlight only the segment corresponding to the reputation level
       if (seller.reputacion && seller.reputacion.nivel === i + 1) {
         segment.classList.add("highlighted");
       }
       reputationBar.appendChild(segment);
     }
 
-    // Attention level
     if (seller.reputacion) {
       const currentReputationLevel =
         reputationLevels[seller.reputacion.nivel - 1];
       attentionLevelText.textContent = currentReputationLevel.attention;
       if (seller.reputacion.nivel >= 3) {
-        // Assuming 3, 4, 5 are "good attention"
         attentionIcon.className = "fas fa-comment-dots icon-green text-xl mb-1";
       } else {
         attentionIcon.className = "fas fa-comment-dots icon-red text-xl mb-1";
       }
     }
 
-    // On-time delivery
     if (seller.reputacion && seller.reputacion.entrega_a_tiempo !== undefined) {
       if (seller.reputacion.entrega_a_tiempo) {
         deliveryTimeText.textContent = "Entrega sus productos a tiempo";
@@ -322,7 +194,6 @@ function renderProduct(product, seller) {
       }
     }
 
-    // "View more seller products" button
     viewSellerProductsBtn.onclick = () => {
       const sellerProductsSection = document.getElementById(
         "seller-products-section"
@@ -335,7 +206,6 @@ function renderProduct(product, seller) {
     sellerDetailsBox.classList.add("hidden");
   }
 
-  // Image gallery
   const mainImage = document.getElementById("main-image");
   const thumbnailsContainer = document.getElementById("thumbnails");
   thumbnailsContainer.innerHTML = "";
@@ -358,7 +228,6 @@ function renderProduct(product, seller) {
     thumbnailsContainer.appendChild(thumbContainer);
   });
 
-  // Set the color sample image
   const colorSampleImage = document.getElementById("color-sample-image");
   if (product.imagenes && product.imagenes.length > 0) {
     colorSampleImage.src = product.imagenes[0]; // Use the first image as the color sample
@@ -366,7 +235,6 @@ function renderProduct(product, seller) {
     colorSampleImage.src = "https://placehold.co/48x48/cccccc/ffffff?text=N/A"; // Placeholder if no images
   }
 
-  // Features (full list)
   const featuresContainer = document.getElementById("product-features");
   featuresContainer.innerHTML = "";
   const featureKeys = Object.keys(product.caracteristicas);
@@ -375,8 +243,15 @@ function renderProduct(product, seller) {
     const value = product.caracteristicas[key];
     let featureHtml = "";
     let iconClass = "";
-    let formattedValue = value === true ? "Sí" : value === false ? "No" : value;
+    let formattedValue;
 
+    if (value === true) {
+      formattedValue = "Sí";
+    } else if (value === false) {
+      formattedValue = "No";
+    } else {
+      formattedValue = value;
+    }
     if (key === "pantalla") {
       iconClass = "fas fa-mobile-alt";
       const screenSizeStr = String(value).split(" ")[0];
@@ -439,7 +314,7 @@ function renderProduct(product, seller) {
           iconClass = "fas fa-fingerprint";
           break;
         default:
-          iconClass = "fas fa-info-circle"; // Default icon
+          iconClass = "fas fa-info-circle"; 
       }
       const formattedKey = key
         .replace(/_/g, " ")
@@ -457,10 +332,10 @@ function renderProduct(product, seller) {
     featuresContainer.innerHTML += featureHtml;
   }
 
-  // Main features list (limited to 3)
+
   const mainFeaturesList = document.getElementById("main-features-list");
-  mainFeaturesList.innerHTML = ""; // Clear previous features
-  const mainFeatureKeys = Object.keys(product.caracteristicas).slice(0, 3); // Get first 3 keys
+  mainFeaturesList.innerHTML = ""; 
+  const mainFeatureKeys = Object.keys(product.caracteristicas).slice(0, 3); 
 
   mainFeatureKeys.forEach((key) => {
     const value = product.caracteristicas[key];
@@ -474,7 +349,6 @@ function renderProduct(product, seller) {
     mainFeaturesList.appendChild(listItem);
   });
 
-  // Scroll to full features when "Ver características" is clicked
   document
     .getElementById("view-all-features-link")
     .addEventListener("click", (event) => {
@@ -484,13 +358,11 @@ function renderProduct(product, seller) {
         .scrollIntoView({ behavior: "smooth" });
     });
 
-  // Update "Otras opciones de compra" link with dynamic price
   const otherOptionsLink = document.getElementById("other-options-link");
   if (otherOptionsLink) {
     otherOptionsLink.textContent = `Ver 3 opciones desde ${product.moneda} ${price}`;
   }
 
-  // Render payment methods
   const paymentMethodsContent = document.getElementById(
     "payment-methods-content"
   );
@@ -554,24 +426,22 @@ function renderRelatedProducts(allProducts, currentProductId) {
   const relatedGrid = document.getElementById("related-products-grid");
   relatedGrid.innerHTML = "";
 
-  // Convert the allProducts object to an array and shuffle it
   const productsArray = Object.values(allProducts);
   const shuffledProducts = productsArray.sort(() => 0.5 - Math.random());
 
   let count = 0;
   for (const product of shuffledProducts) {
-    if (product.id === currentProductId) continue; // Do not show the current product
-    if (count >= 5) break; // Limit to 5 related products
+    if (product.id === currentProductId) continue; 
+    if (count >= 5) break; 
 
     const cardLink = document.createElement("a");
     cardLink.href = `?id=${product.id}`;
     cardLink.className =
       "bg-white rounded-lg shadow-sm p-4 flex flex-col hover:shadow-xl transition-shadow duration-300 border";
     cardLink.onclick = (event) => {
-      // Add onclick to handle navigation and data loading
-      event.preventDefault(); // Prevent default link behavior
-      history.pushState(null, "", cardLink.href); // Update URL without full reload
-      loadProductData(); // Load new product data
+      event.preventDefault(); 
+      history.pushState(null, "", cardLink.href); 
+      loadProductData(); 
     };
 
     cardLink.innerHTML = `
@@ -622,10 +492,9 @@ function renderSellerProducts(
       cardLink.className =
         "bg-white rounded-lg shadow-sm p-4 flex flex-col hover:shadow-xl transition-shadow duration-300 border";
       cardLink.onclick = (event) => {
-        // Add onclick to handle navigation and data loading
-        event.preventDefault(); // Prevent default link behavior
-        history.pushState(null, "", cardLink.href); // Update URL without full reload
-        loadProductData(); // Load new product data
+        event.preventDefault(); 
+        history.pushState(null, "", cardLink.href); 
+        loadProductData(); 
       };
 
       cardLink.innerHTML = `

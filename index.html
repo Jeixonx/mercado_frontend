@@ -15,61 +15,13 @@
 
     <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <link rel="stylesheet" href="styles.css">
 
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f5f5f5;
-        }
-        .breadcrumb a:hover {
-            color: #3483fa;
-        }
-        .thumbnail-selected {
-            border: 2px solid #3483fa;
-        }
-        /* Estilos para la barra de reputación */
-        .reputation-bar-segment {
-            height: 8px;
-            width: 20%; /* 100% / 5 segmentos */
-            border-radius: 2px;
-            margin-right: 2px; /* Pequeño espacio entre segmentos */
-            /* Colores base muy claros para los segmentos no resaltados */
-        }
-        .reputation-bar-segment.reputation-level-1 { background-color: rgba(239, 68, 68, 0.2); /* red-500 con 20% opacidad */ }
-        .reputation-bar-segment.reputation-level-2 { background-color: rgba(249, 115, 22, 0.2); /* orange-500 con 20% opacidad */ }
-        .reputation-bar-segment.reputation-level-3 { background-color: rgba(245, 158, 11, 0.2); /* yellow-500 con 20% opacidad */ }
-        .reputation-bar-segment.reputation-level-4 { background-color: rgba(132, 204, 22, 0.2); /* lime-500 con 20% opacidad */ }
-        .reputation-bar-segment.reputation-level-5 { background-color: rgba(34, 197, 94, 0.2); /* green-500 con 20% opacidad */ }
+    <script src="js/api.js"></script>
+    <script src="js/render.js"></script>
+    <script src="js/main.js"></script>
 
-        .reputation-bar-segment:last-child {
-            margin-right: 0;
-        }
-        /* Colores para el segmento resaltado */
-        .reputation-level-1.highlighted { background-color: #ef4444; /* red-500 */ }
-        .reputation-level-2.highlighted { background-color: #f97316; /* orange-500 */ }
-        .reputation-level-3.highlighted { background-color: #f59e0b; /* yellow-500 */ }
-        .reputation-level-4.highlighted { background-color: #84cc16; /* lime-500 (light green) */ }
-        .reputation-level-5.highlighted { background-color: #22c55e; /* green-500 */ }
-
-        /* Colores para iconos de reputación */
-        .icon-green { color: #22c55e; /* green-500 */ }
-        .icon-red { color: #ef4444; /* red-500 */ }
-
-        /* Estilos para la barra de tamaño de pantalla */
-        .size-bar-segment {
-            height: 8px;
-            width: 20%;
-            border-radius: 2px;
-            margin-right: 2px;
-            background-color: #e0e0e0; /* Gris para no resaltado */
-        }
-        .size-bar-segment:last-child {
-            margin-right: 0;
-        }
-        .size-bar-segment.highlighted {
-            background-color: #3483fa; /* Azul para resaltado */
-        }
-    </style>
 </head>
 <body class="bg-gray-100">
 
@@ -253,7 +205,7 @@
         </div>
     </div>
 
-       <script src="script.js"></script>
+       
 
 </body>
 </html>
